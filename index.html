@@ -34,26 +34,27 @@
             padding: 12px;
             position: sticky;
             top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .profile-selector {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
             margin-bottom: 12px;
         }
 
         .profile-btn {
-            flex: 1;
             padding: 10px;
             border: 2px solid #dee2e6;
             background: #fff;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-muted);
             cursor: pointer;
+            transition: all 0.2s;
         }
 
         .profile-btn.active[data-mode="lojista"] {
@@ -70,68 +71,57 @@
 
         .search-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 8px;
+            grid-template-columns: 2fr 1fr 1.2fr;
+            gap: 6px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #ced4da;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             outline: none;
         }
 
-        input:focus {
-            border-color: #adb5bd;
-        }
+        input:focus { border-color: #adb5bd; }
 
-        .container {
-            padding: 12px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .container { padding: 12px; }
 
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 10px;
+            padding: 12px;
             margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
 
         .card-top {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
+            align-items: center;
+            margin-bottom: 6px;
         }
 
         .ref-tag {
-            font-family: monospace;
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--text-dark);
+            font-weight: 800;
+            color: #495057;
+            font-size: 0.9rem;
         }
 
         .ilha-badge {
             background: #e9ecef;
             padding: 2px 8px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: var(--text-muted);
         }
 
         .product-desc {
-            font-size: 14px;
+            font-size: 0.85rem;
             color: var(--text-muted);
-            margin-bottom: 16px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            margin-bottom: 12px;
+            height: 2.5em;
             overflow: hidden;
         }
 
@@ -139,48 +129,28 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            padding-top: 12px;
+            padding-top: 8px;
             border-top: 1px dashed #eee;
         }
 
-        .price-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-        }
+        .price-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
+        .price-value { font-size: 1.2rem; font-weight: 800; color: #212529; }
+        .price-old { font-size: 0.75rem; text-decoration: line-through; color: #adb5bd; }
 
-        .price-value {
-            font-size: 20px;
-            font-weight: 800;
-            color: #28a745;
-        }
-
-        .price-old {
-            font-size: 12px;
-            text-decoration: line-through;
-            color: #dc3545;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-        }
+        .no-results { text-align: center; padding: 40px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="profile-selector" id="profileSelector">
-            <button class="profile-btn active" data-mode="lojista">LOJISTA</button>
-            <button class="profile-btn" data-mode="especificador">ESPECIFICADOR</button>
+        <div class="profile-selector">
+            <button class="profile-btn active" data-mode="especificador">ESPECIFICADOR</button>
+            <button class="profile-btn" data-mode="lojista">LOJISTA</button>
         </div>
-        
         <div class="search-grid">
-            <input type="text" id="search" placeholder="Ref ou Descrição..." autocomplete="off">
-            <input type="number" id="ilha" placeholder="Ilha" inputmode="numeric">
-            <input type="number" id="discount" placeholder="% Desc" inputmode="decimal">
+            <input type="text" id="search" placeholder="Ref ou nome...">
+            <input type="number" id="ilha" placeholder="Ilha">
+            <input type="number" id="discount" placeholder="Desc %">
         </div>
     </div>
 
@@ -188,32 +158,28 @@
 
     <script src="database.js"></script>
     <script>
-        let currentMode = 'lojista';
+        // Inicia como especificador por segurança
+        let currentMode = 'especificador';
         const resultsEl = document.getElementById('results');
-        const profileSelector = document.getElementById('profileSelector');
 
-        // Lógica de URL para links específicos
-        function checkUrlParams() {
-            const params = new URLSearchParams(window.location.search);
-            const perfil = params.get('perfil');
-            
-            if (perfil === 'especificador' || perfil === 'lojista') {
-                currentMode = perfil;
-                // Esconde o seletor para segurança se usar o link direto
-                profileSelector.style.display = 'none';
-                
-                document.querySelectorAll('.profile-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.mode === currentMode);
-                });
-            }
-        }
-
-        // Alternar Perfil Manualmente (caso o seletor esteja visível)
+        // Alternar Perfil com validação de senha
         document.querySelectorAll('.profile-btn').forEach(btn => {
             btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+
+                // Se o modo clicado for LOJISTA, solicita a senha
+                if (mode === 'lojista') {
+                    const senha = prompt("Acesso restrito. Digite a senha de LOJISTA:");
+                    if (senha !== "lexxa3.5") {
+                        alert("Senha incorreta! Acesso negado.");
+                        return; // Cancela a mudança
+                    }
+                }
+
+                // Aplica a mudança visual e lógica
                 document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                currentMode = btn.dataset.mode;
+                currentMode = mode;
                 updateUI();
             });
         });
@@ -239,6 +205,7 @@
             }
 
             resultsEl.innerHTML = filtered.slice(0, 30).map(item => {
+                // p = lojista, e = especificador
                 const base = (currentMode === 'lojista' ? item.p : item.e);
                 const final = base * (1 - (disc / 100));
                 
@@ -252,7 +219,7 @@
                         <div class="price-section">
                             <div>
                                 ${disc > 0 ? `<div class="price-old">${format(base)}</div>` : ''}
-                                <div class="price-label">Preço Final (${currentMode})</div>
+                                <div class="price-label">Preço Final (${currentMode.toUpperCase()})</div>
                             </div>
                             <div class="price-value">${format(final)}</div>
                         </div>
@@ -261,12 +228,12 @@
             }).join('');
         }
 
+        // Eventos
         document.getElementById('search').oninput = updateUI;
         document.getElementById('ilha').oninput = updateUI;
         document.getElementById('discount').oninput = updateUI;
 
-        // Inicia verificando a URL e depois a UI
-        checkUrlParams();
+        // Inicialização
         updateUI();
     </script>
 </body>
