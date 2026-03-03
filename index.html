@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Consulta de Preços Pro</title>
+    <title>Lexxa Bagno - v3.5</title>
     <style>
         :root {
             --primary-lojista: #007bff;
@@ -15,18 +15,12 @@
             --text-muted: #6c757d;
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body { 
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg); 
             color: var(--text-dark);
-            line-height: 1.5;
         }
 
         .header {
@@ -35,122 +29,76 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .profile-selector {
+        /* Grid de botões com Especificador na esquerda */
+        .mode-selector {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
             margin-bottom: 12px;
         }
 
-        .profile-btn {
-            padding: 10px;
-            border: 2px solid #dee2e6;
-            background: #fff;
+        .mode-btn {
+            padding: 12px;
+            border: none;
             border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
+            font-weight: bold;
+            background: #eee;
+            color: #666;
+            transition: 0.3s;
         }
 
-        .profile-btn.active[data-mode="lojista"] {
-            border-color: var(--primary-lojista);
-            background: var(--primary-lojista);
-            color: white;
-        }
+        .mode-btn.active-lojista { background: var(--primary-lojista); color: white; }
+        .mode-btn.active-especificador { background: var(--primary-especificador); color: white; }
 
-        .profile-btn.active[data-mode="especificador"] {
-            border-color: var(--primary-especificador);
-            background: var(--primary-especificador);
-            color: white;
-        }
-
-        .search-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1.2fr;
-            gap: 6px;
-        }
+        .search-box { display: flex; flex-direction: column; gap: 8px; }
 
         input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 0.9rem;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
             outline: none;
         }
 
-        input:focus { border-color: #adb5bd; }
-
+        .filters-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .container { padding: 12px; }
 
         .card {
             background: var(--card-bg);
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid transparent;
         }
 
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .ref-tag {
-            font-weight: 800;
-            color: #495057;
-            font-size: 0.9rem;
-        }
-
-        .ilha-badge {
-            background: #e9ecef;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .product-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            height: 2.5em;
-            overflow: hidden;
-        }
-
-        .price-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-top: 8px;
-            border-top: 1px dashed #eee;
-        }
-
-        .price-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
-        .price-value { font-size: 1.2rem; font-weight: 800; color: #212529; }
-        .price-old { font-size: 0.75rem; text-decoration: line-through; color: #adb5bd; }
-
-        .no-results { text-align: center; padding: 40px; color: var(--text-muted); }
+        .card-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .ref-tag { font-weight: 800; font-size: 14px; color: #000; }
+        .ilha-badge { background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 11px; color: var(--text-muted); font-weight: bold; }
+        .product-desc { font-size: 14px; margin-bottom: 12px; color: #444; min-height: 40px; }
+        .price-section { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 12px; border-top: 1px dashed #eee; }
+        .price-old { font-size: 11px; text-decoration: line-through; color: var(--text-muted); }
+        .price-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: bold; display: block; }
+        .price-value { font-size: 19px; font-weight: 800; color: #28a745; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="profile-selector">
-            <button class="profile-btn active" data-mode="especificador">ESPECIFICADOR</button>
-            <button class="profile-btn" data-mode="lojista">LOJISTA</button>
+        <div class="mode-selector">
+            <button id="btnEspecificador" class="mode-btn active-especificador" onclick="setMode('especificador')">ESPECIFICADOR</button>
+            <button id="btnLojista" class="mode-btn" onclick="checkPassword()">LOJISTA</button>
         </div>
-        <div class="search-grid">
-            <input type="text" id="search" placeholder="Ref ou nome...">
-            <input type="number" id="ilha" placeholder="Ilha">
-            <input type="number" id="discount" placeholder="Desc %">
+        <div class="search-box">
+            <input type="text" id="search" placeholder="Buscar referência ou descrição...">
+            <div class="filters-row">
+                <input type="text" id="ilha" placeholder="Ilha">
+                <input type="number" id="discount" placeholder="% Desconto">
+            </div>
         </div>
     </div>
 
@@ -158,68 +106,71 @@
 
     <script src="database.js"></script>
     <script>
-        // Inicia como especificador por segurança
         let currentMode = 'especificador';
-        const resultsEl = document.getElementById('results');
 
-        // Alternar Perfil com validação de senha
-        document.querySelectorAll('.profile-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
+        function checkPassword() {
+            if (currentMode === 'lojista') return;
+            const pass = prompt("Acesso Restrito. Digite a senha:");
+            if (pass === "lexxa3.5") { 
+                setMode('lojista');
+            } else if (pass !== null) {
+                alert("Senha Inválida!");
+            }
+        }
 
-                // Se o modo clicado for LOJISTA, solicita a senha
-                if (mode === 'lojista') {
-                    const senha = prompt("Acesso restrito. Digite a senha de LOJISTA:");
-                    if (senha !== "lexxa3.5") {
-                        alert("Senha incorreta! Acesso negado.");
-                        return; // Cancela a mudança
-                    }
-                }
+        const parseValue = (val) => {
+            if (val === undefined || val === null) return 0;
+            if (typeof val === 'number') return val;
+            // Converte a vírgula para ponto se o banco de dados vier como string
+            return parseFloat(String(val).replace(',', '.')) || 0;
+        };
 
-                // Aplica a mudança visual e lógica
-                document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentMode = mode;
-                updateUI();
-            });
-        });
+        const format = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-        function format(val) {
-            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnLojista').className = `mode-btn ${mode === 'lojista' ? 'active-lojista' : ''}`;
+            document.getElementById('btnEspecificador').className = `mode-btn ${mode === 'especificador' ? 'active-especificador' : ''}`;
+            updateUI();
         }
 
         function updateUI() {
-            const q = document.getElementById('search').value.toLowerCase();
-            const ilha = document.getElementById('ilha').value.trim();
+            const search = document.getElementById('search').value.toLowerCase();
+            const ilha = document.getElementById('ilha').value.toLowerCase();
             const disc = parseFloat(document.getElementById('discount').value) || 0;
+            const container = document.getElementById('results');
 
-            const filtered = database.filter(item => {
-                const matchesTxt = item.r.toLowerCase().includes(q) || item.d.toLowerCase().includes(q);
-                const matchesIlha = !ilha || String(item.i).includes(ilha);
-                return matchesTxt && matchesIlha;
-            });
-
-            if (filtered.length === 0) {
-                resultsEl.innerHTML = '<div class="no-results">Nenhum item encontrado</div>';
+            if (typeof data === 'undefined') {
+                container.innerHTML = "Erro ao carregar banco de dados (data undefined).";
                 return;
             }
 
-            resultsEl.innerHTML = filtered.slice(0, 30).map(item => {
-                // p = lojista, e = especificador
-                const base = (currentMode === 'lojista' ? item.p : item.e);
+            const filtered = data.filter(item => {
+                const r = String(item.r || "").toLowerCase();
+                const d = String(item.d || "").toLowerCase();
+                const i = String(item.i || "").toLowerCase();
+                
+                const matchText = r.includes(search) || d.includes(search);
+                const matchIlha = i.includes(ilha);
+                return matchText && matchIlha;
+            });
+
+            container.innerHTML = filtered.map(item => {
+                const base = parseValue(currentMode === 'lojista' ? item.p : item.e);
                 const final = base * (1 - (disc / 100));
+                const accentColor = currentMode === 'lojista' ? 'var(--primary-lojista)' : 'var(--primary-especificador)';
                 
                 return `
-                    <div class="card" style="border-top: 3px solid ${currentMode === 'lojista' ? 'var(--primary-lojista)' : 'var(--primary-especificador)'}">
+                    <div class="card" style="border-left-color: ${accentColor}">
                         <div class="card-top">
                             <span class="ref-tag">${item.r}</span>
-                            ${item.i ? `<span class="ilha-badge">ILHA ${item.i}</span>` : ''}
+                            ${item.i && String(item.i).trim() !== "" ? `<span class="ilha-badge">ILHA ${item.i}</span>` : ''}
                         </div>
                         <div class="product-desc">${item.d}</div>
                         <div class="price-section">
                             <div>
                                 ${disc > 0 ? `<div class="price-old">${format(base)}</div>` : ''}
-                                <div class="price-label">Preço Final (${currentMode.toUpperCase()})</div>
+                                <span class="price-label">TABELA ${currentMode.toUpperCase()}</span>
                             </div>
                             <div class="price-value">${format(final)}</div>
                         </div>
@@ -228,12 +179,10 @@
             }).join('');
         }
 
-        // Eventos
-        document.getElementById('search').oninput = updateUI;
-        document.getElementById('ilha').oninput = updateUI;
-        document.getElementById('discount').oninput = updateUI;
+        document.getElementById('search').addEventListener('input', updateUI);
+        document.getElementById('ilha').addEventListener('input', updateUI);
+        document.getElementById('discount').addEventListener('input', updateUI);
 
-        // Inicialização
         updateUI();
     </script>
 </body>
